@@ -8,7 +8,7 @@ This document outlines the research, selection, and configuration of the photovo
 *   **Power Rating**: 400W (+/- 3%)
 *   **Quantity**: 4
 
-### Electrical Parameters (@ STC)
+### 1.1 Electrical Parameters (@ STC)
 *   **Maximum Power (Pₘₐₓ)**: 400 W
 *   **Voltage at Pₘₐₓ (Vₘₚ)**: 38.43 V
 *   **Current at Pₘₐₓ (Iₘₚ)**: 10.41 A
@@ -16,13 +16,16 @@ This document outlines the research, selection, and configuration of the photovo
 *   **Short-Circuit Current (Iₛ꜀)**: 11.13 A
 *   **Module Efficiency**: 21.96 %
 
-### Mechanical & Operating Parameters
+### 1.2 Mechanical & Operating Parameters
 *   **Dimensions**: 1755 × 1038 × 30 mm
 *   **Weight**: 22.8 kg
 *   **Cell Type**: HJT, 9-BB half-cut
 *   **Max System Voltage**: 1500 V DC
 *   **NOCT**: 45 ± 2 °C
 *   **Temperature Coefficient of Pₘₐₓ**: –0.24 % / °C
+
+### 1.3 Datasheet / Manual
+- [Link to datasheet](docs/AKCOME 400W SK8610HDGDC-(166)-(9BB)-(1755-1038-30)-(380-400)-12_D.pdf)
 
 *   **Mounting Note**: While these are bifacial panels, the rear side will not be explicitly used for bifacial gain. However, the frame design ensures good air circulation for cooling, which is beneficial for all panel types.
 

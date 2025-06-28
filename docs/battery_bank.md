@@ -33,6 +33,9 @@ The objective of the battery bank is to act as the core energy reservoir for the
     *   Stop charge at > 3.65V or > 65°C.
     *   Stop discharge at < 2.5V or < -30°C.
 
+## 2.4 Datasheet / Manual
+- [Link to datasheet](docs/CATL-320Ah-3.2V-LiFePO4-Prismatic-Battery-Cell-Specification-Datasheet.pdf)
+
 ## 3. Bank Configuration & Components
 *   **Configuration**: 8S1P (8 cells in series)
 *   **Nominal System Voltage**: 24V class (25.6V calculated from 8 x 3.2V/cell)
@@ -46,36 +49,13 @@ The objective of the battery bank is to act as the core energy reservoir for the
 *   **Enclosure**:
 
 ## 4. Assembly
-- **Assembly Steps**:
-  - Place the battery cells in the enclosure.
-  - Connect the cells in series.
-  - Connect the parallel cell in series with the series group.
-  - Connect the main positive and negative terminals to the BMS.
-  - Connect the BMS to the battery monitor.
-  - Connect the main system load to the battery bank.
-  - Install the 250A ANL fuse.
-  - Connect the wiring to the busbars.
-  - Seal the enclosure.
+detailed notes on asembly to come.
 
 ## 5. Maintenance
-- **Regular Checks**:
-  - Check the battery bank for any signs of damage or leakage.
-  - Check the battery bank for any signs of overheating.
-  - Check the battery bank for any signs of corrosion.
-- **Charging**:
-  - Charge the battery bank using a solar charger or a grid-tied inverter.
-- **Discharging**:
-  - Discharge the battery bank using a grid-tied inverter or a grid-connected load.
+have to think about this
 
 ## 6. Safety
-- **Handling**:
-  - Handle the battery bank with care to avoid damage.
-  - Handle the battery bank with gloves to avoid skin contact with the battery terminals.
-- **Storage**:
-  - Store the battery bank in a cool, dry place.
-  - Store the battery bank in an upright position.
-- **Disposal**:
-  - Dispose of the battery bank properly according to local regulations.
+safty 6th it seems
 
 ## 7. Conclusion
 The 24V LiFePO4 battery bank has been designed, assembled, and maintained according to the specifications and guidelines provided in this document. It is now ready for use in the off-grid power system. 
