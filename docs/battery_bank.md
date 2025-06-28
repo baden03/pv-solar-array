@@ -3,7 +3,10 @@
 This document details the design, components, and assembly of the LiFePO4 battery bank, based on official cell specifications.
 
 ## 1. Objective
-The primary goal of the battery bank is to **maintain a healthy state of charge** using power from the solar array, ensuring a reliable off-grid power supply.
+The objective of the battery bank is to act as the core energy reservoir for the entire off-grid system. Its primary functions are to:
+*   **Store Surplus Energy**: Capture and store all excess solar energy generated during the day that is not immediately consumed by loads.
+*   **Provide On-Demand Power**: Deliver stable, reliable power to the inverter during periods of low or no solar generation (e.g., overnight, on cloudy days).
+*   **Enable Energy Independence**: Decouple energy generation from consumption, providing a resilient and continuous power source for all connected appliances.
 
 ## 2. Cell Specifications
 
