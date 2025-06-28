@@ -1,63 +1,65 @@
 # Mounting, Ballast & Thermal Management
 
-This document outlines the final design and conceptual history for the solar array's mounting system. The primary goals are to provide secure, non-penetrating anchoring on a shipping container roof and to integrate a thermal management system for PV panel cooling and potential hot water generation.
+This document outlines the current design, future plans, and conceptual history for the solar array's physical and thermal systems.
 
 ---
 
-## 1. Final Mounting Configuration
+## 1. Implemented Design (Master Plan)
 
-The system is designed for a 10° East/West orientation to provide a broad, consistent power generation curve throughout the day, which is optimal for the system's usage patterns.
-
-### 1.1. Mechanical & Structural Design
+This section details the current, implemented configuration of the mounting system.
 
 *   **Mounting System**: The chosen hardware is the **[Avoltik Solarpanel Halterung für 4 Module (10°)](https://pv-insel.de/products/avoltik-solarpanel-halterung-for-4-module-komplettset-for-solarmodule-bis-2000-1200-mm)**.
 *   **Configuration**: The array is configured with a central North-South ridge. Two panels are tilted 10° to the east, and two panels are tilted 10° to the west.
 *   **Ballast**: This is a non-penetrating, ballast-based system. The final ballast weight must be calculated and applied to meet local wind load requirements.
 *   **Airflow**: The mounting hardware provides a sufficient air gap (≥10 cm) between the panel backsheets and the container roof, promoting passive convective cooling.
-*   **Fallback Plan**: If the East/West orientation does not meet performance requirements, the mounting hardware can be reconfigured to create two separate south-facing banks with a 23° tilt angle to maximize peak sun capture.
+*   **Maintenance**: The 10° tilt is less than ideal for self-cleaning. Panels may require more frequent manual rinsing.
 
-### 1.2. Expected Performance Profile
+## 2. Contingency Plan (Plan B)
 
-The East/West split was chosen to broaden the daily generation window, which is preferable to a sharp midday peak.
-
-| Time of Day | 10° East/West Split (Chosen) | 23° South-Facing (Backup) |
-| ----------- | ---------------------------- | --------------------------- |
-| Morning     | Moderate peak (east bank)    | Lower output                |
-| Midday      | High plateau                 | Sharper, higher peak        |
-| Afternoon   | Moderate peak (west bank)    | Tapers off smoothly         |
-
-### 1.3. System Maintenance
-*   **Self-Cleaning**: The 10° tilt angle is less than the ideal >15° for natural self-cleaning via rain. Panels may require more frequent manual rinsing to remove soiling.
-*   **Plumbing**: All water lines for the thermal system will be routed beneath the mounting rails to prevent drips or leaks onto the panel surfaces.
+*   **Fallback Configuration**: If the East/West orientation does not meet performance requirements, the mounting hardware can be reconfigured to create two separate south-facing banks with a 23° tilt angle to maximize peak sun capture.
 
 ---
 
-## 2. Thermal Management System
+## 3. Future Development: Thermal Integration (Future Plan)
 
-The secondary function of the ballast system is to act as a heat sink for an active PV panel cooling loop.
+This section outlines the concepts for integrating a thermal management system for PV panel cooling and hot water generation. This represents the next potential phase of the project.
 
-*   **Cooling Concept**: The **Rear-side Cooling** concept was adopted. Water will be actively circulated between a backplate and the rear of the PV panels to extract waste heat.
+### 3.1. PV Panel Cooling
+
+*   **Adopted Concept**: Rear-side cooling. Water will be actively circulated between a backplate and the rear of the PV panels to extract waste heat.
 *   **System Integration**: The heated water from the panel cooling loop will be circulated back into the main water ballast tanks, pre-heating the thermal mass.
-*   **Insulation**: All plumbing for the cooling loop will be insulated to prevent unwanted heat gain from the ambient environment or reverse heat loss overnight.
+*   **Rejected Concept**: Front-side water film cooling was rejected due to issues with refraction and mineral deposits.
+
+### 3.2. Hot Water Integration Options
+
+Once the panel cooling loop is established, the heated ballast water can be used to generate domestic hot water. Three primary options are being considered:
+
+*   **Option A: Open Loop Circulation**
+    *   Top of ballast tank feeds hot water to the top of a domestic tank. Cold water from the bottom of the domestic tank returns to the bottom of the ballast.
+    *   **Pros**: Direct heating, simple plumbing.
+    *   **Cons**: Ballast water must be clean, potential for contamination or stagnation.
+
+*   **Option B: Closed Ballast + Heat Exchanger**
+    *   Ballast water stays sealed. A heat exchanger (copper coil or external plate) extracts heat for a secondary potable water loop.
+    *   **Pros**: Safer, isolated system. Easier to treat ballast loop with antifreeze.
+    *   **Cons**: Slightly more complex and expensive.
+
+*   **Option C: Thermosiphon System**
+    *   An elevated thermal tank is placed above the ballast. Hot water rises passively from the ballast to the tank, and cold water sinks back down.
+    *   **Pros**: Passive (no pump), simple, reliable.
+    *   **Cons**: Requires significant height difference, slow transfer rate.
+
+### 3.3. Advanced Concepts: Automated Cooling & Water Replacement
+
+*   **Concept A: Passive Refill**: Use filtered rainwater from barrels to refill the ballast via a float valve when the water is used or dumped.
+*   **Concept B: Temperature-Triggered Diverter**: Use a thermostatic valve to switch from the hot water storage loop to a cool rainwater source to actively cool the panels/ballast when they get too hot.
+*   **Concept C: Heat Exchanger + Drain**: Use a heat exchanger to heat domestic water, and if the ballast still gets too hot, drain and refill it with cool water.
 
 ---
 
-## 3. Design History & Alternative Concepts
+## 4. Initial Ballast Design Concept
 
-This section archives the initial brainstorming and phased design concepts that led to the final configuration.
+This section archives the original baseline design for the water ballast itself, which serves as the foundation for the thermal integration plans.
 
-### Phase 1: Simple Water Ballast System
-*   **Purpose**: Provide sufficient weight to anchor solar panel mounting frames without drilling.
-*   **Initial Design**: 2 × 200 mm diameter PVC-U UV-resistant pipes, ~280 L of water.
-
-### Phase 2: Hot Water Integration Options
-*   **Option A: Open Loop**: Direct circulation between ballast and domestic tank. (Rejected due to contamination risk).
-*   **Option B: Closed Loop + Heat Exchanger**: Safer, isolated system. (Considered viable).
-*   **Option C: Thermosiphon**: Passive, no-pump system. (Considered viable but slow).
-
-### Phase 3: Cooling & Water Replacement Concepts
-*   Concepts for using rainwater and thermostatic valves to manage ballast water temperature.
-
-### Phase 4: PV Panel Cooling Concepts
-*   **Front-side Cooling**: Rejected due to refraction and mineral deposit issues.
-*   **Rear-side Cooling**: Adopted for its efficiency and minimal impact on solar output.
+*   **Purpose**: Provide ~280 kg of weight to anchor solar panel frames without drilling.
+*   **Initial Design**: 2 × 200 mm diameter PVC-U UV-resistant pipes, 4 m long, connected in a U-shape.
