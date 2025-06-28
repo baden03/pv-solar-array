@@ -1,6 +1,6 @@
 # Mounting, Ballast & Thermal Management
 
-This document outlines the current design, future plans, and conceptual history for the solar array's physical and thermal systems.
+We started with a simple goal: secure solar panels on a shipping container using water ballast. This led to a series of expanding ideas to maximize efficiency, energy recovery, and sustainable integration. This document outlines the current implemented design, future plans, and the conceptual history of the project.
 
 ---
 
@@ -8,7 +8,7 @@ This document outlines the current design, future plans, and conceptual history 
 
 This section details the current, implemented configuration of the mounting system.
 
-*   **Mounting System**: The chosen hardware is the **[Avoltik Solarpanel Halterung für 4 Module (10°)](https://pv-insel.de/products/avoltik-solarpanel-halterung-for-4-module-komplettset-for-solarmodule-bis-2000-1200-mm)**.
+*   **Mounting System**: The chosen hardware is the **[Avoltik Solarpanel Halterung für 4 Module (10°)](https://pv-insel.de/products/avoltik-solarpanel-halterung-fur-4-module-komplettset-fur-solarmodule-bis-2000-1200-mm)**.
 *   **Configuration**: The array is configured with a central North-South ridge. Two panels are tilted 10° to the east, and two panels are tilted 10° to the west.
 *   **Ballast**: This is a non-penetrating, ballast-based system. The final ballast weight must be calculated and applied to meet local wind load requirements.
 *   **Airflow**: The mounting hardware provides a sufficient air gap (≥10 cm) between the panel backsheets and the container roof, promoting passive convective cooling.
@@ -55,11 +55,27 @@ Once the panel cooling loop is established, the heated ballast water can be used
 *   **Concept B: Temperature-Triggered Diverter**: Use a thermostatic valve to switch from the hot water storage loop to a cool rainwater source to actively cool the panels/ballast when they get too hot.
 *   **Concept C: Heat Exchanger + Drain**: Use a heat exchanger to heat domestic water, and if the ballast still gets too hot, drain and refill it with cool water.
 
+### 3.4. Development Roadmap (Next Steps)
+*	Build and test initial 200mm ballast tank system.
+*	Measure thermal performance of the integrated system.
+*	Add temperature probes for data logging.
+*	Explore thermosiphon tank vs. heat exchanger integration based on performance data.
+*	Iterate on the design based on practical results.
+
 ---
 
-## 4. Initial Ballast Design Concept
+## 4. Conceptual Foundation: The Original Water Ballast Design
 
-This section archives the original baseline design for the water ballast itself, which serves as the foundation for the thermal integration plans.
+This section archives the original baseline design for the water ballast itself, which serves as the foundation for all the thermal integration plans.
 
-*   **Purpose**: Provide ~280 kg of weight to anchor solar panel frames without drilling.
-*   **Initial Design**: 2 × 200 mm diameter PVC-U UV-resistant pipes, 4 m long, connected in a U-shape.
+*   **Purpose**: Provide sufficient weight to anchor solar panels without drilling into the container roof.
+*   **Design Details**:
+    *   2 × 200 mm diameter PVC pipes, 4 m long
+    *   Connected at one end with 90° elbows and a 0.5 m pipe to form a U-shape.
+    *   Mid-point connection with T-connectors and a 0.5 m brace pipe.
+    *   Inlet and outlet: garden hose fittings (top fill, bottom drain).
+    *   Approximate Volume: 280 L, providing ~280 kg of ballast.
+*   **Advantages**:
+    *   Inexpensive and readily available materials.
+    *   Modular and scalable design.
+    *   Stable due to distributed weight and cross-bracing.
