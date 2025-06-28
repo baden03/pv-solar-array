@@ -2,20 +2,41 @@
 
 This document outlines the research, selection, and configuration of the photovoltaic (PV) panels for the solar array mounted on a 20 ft shipping container in Lübeck, Germany.
 
-## 1. Panel Selection
+## 1. Panel Specifications
 
-*   **Quantity & Rating**: 4 × 400 W, bifacial PV modules
-*   **Mounting Note**: The rear side will not be explicitly used for bifacial gain, but the mounting frames are designed to ensure good air circulation, which is beneficial for all panel types.
+*   **Manufacturer / Model**: AKCOME SK8610HDGDC
+*   **Power Rating**: 400W (+/- 3%)
+*   **Quantity**: 4
+
+### Electrical Parameters (@ STC)
+*   **Maximum Power (Pₘₐₓ)**: 400 W
+*   **Voltage at Pₘₐₓ (Vₘₚ)**: 38.43 V
+*   **Current at Pₘₐₓ (Iₘₚ)**: 10.41 A
+*   **Open-Circuit Voltage (Vₒ꜀)**: 45.45 V
+*   **Short-Circuit Current (Iₛ꜀)**: 11.13 A
+*   **Module Efficiency**: 21.96 %
+
+### Mechanical & Operating Parameters
+*   **Dimensions**: 1755 × 1038 × 30 mm
+*   **Weight**: 22.8 kg
+*   **Cell Type**: HJT, 9-BB half-cut
+*   **Max System Voltage**: 1500 V DC
+*   **NOCT**: 45 ± 2 °C
+*   **Temperature Coefficient of Pₘₐₓ**: –0.24 % / °C
+
+*   **Mounting Note**: While these are bifacial panels, the rear side will not be explicitly used for bifacial gain. However, the frame design ensures good air circulation for cooling, which is beneficial for all panel types.
 
 ## 2. Array Layout & Wiring
 
 *   **Electrical Strings**:
     *   The panels are wired in two parallel strings.
     *   Each string consists of two modules wired in series (2S).
-    *   This "2S2P" (two in series, two in parallel) configuration balances voltage and current for the MPPT controller and provides redundancy.
-*   **MPPT Input**:
-    *   The nominal voltage of each string (~2 × Vmp) sits comfortably within the inverter's 55–450 VDC MPPT range.
-    *   The total expected charging current is well under the 110 A MPPT limit.
+    *   This **2S2P** (two in series, two in parallel) configuration provides a balance of voltage and current for the MPPT controller and adds redundancy.
+*   **MPPT Input Calculations**:
+    *   **Voltage per string (2S)**: The open-circuit voltage (Vₒ꜀) is `2 x 45.45V = 90.9V`. The operating voltage (Vₘₚ) is `2 x 38.43V = 76.86V`. This range is comfortably within the inverter's 55–450 VDC MPPT window.
+    *   **Current for array (2P)**: The total operating current (Iₘₚ) is `2 x 10.41A = 20.82A`. This is well under the 110A maximum for the MPPT controller.
+*   **Cabling**:
+    *   **Type**: 6mm² tinned copper photovoltaic solar cable (Red/Black).
 
 ## 3. Tilt & Orientation
 
