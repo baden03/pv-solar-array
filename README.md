@@ -1,6 +1,6 @@
 # PV Solar Project Hub
 
-This repository is a central collection of research, plans, and documentation for a comprehensive DIY solar power system. The goal is to design and build a robust, scalable, and multi-functional solar installation.
+This repository is a central collection of research, plans, and documentation for a comprehensive DIY solar power system. The goal is to document how I designed and built a robust, scalable, and multi-functional solar installation on the top of a 20ft shipping container.
 
 ## Project Components
 

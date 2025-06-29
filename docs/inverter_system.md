@@ -36,5 +36,5 @@ This document covers the specifications for the all-in-one MPPT solar controller
 *   **Display**: Onboard LCD for PV voltage, battery SOC, load status, etc.
 *   **Communication Ports**: RS485; optional Wi-Fi/Bluetooth dongle
 
-## Product Research
+## Datasheet / Manual
 - [Link to product manual](docs/EM_402A_4000W_Manual_EN_31852179-4d24-4355-8ee4-4af7b8c6d221.pdf)
