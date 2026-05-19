@@ -1,231 +1,179 @@
 # Solar Ballast System & Thermal Integration Concepts
 
-This repository documents modular, low-cost, and expandable design ideas for solar panel ballast systems that can double as thermal mass for hot water generation and photovoltaic (PV) panel cooling.
+This document describes a **three-phase** approach to anchoring PV on a shipping container roof without drilling: **magnetic anchor pads and lashing (Phase 1)**, **simple static water ballast (Phase 2)**, and **thermosiphon-based thermal integration (Phase 3)**. It keeps modular, low-cost expansion in mind and preserves prior water-only concepts as Phase 2/3 content.
+
+---
 
 ## Overview
 
-The ballast system anchors solar panels on a shipping container roof without drilling, while supporting future thermal integration (hot water, cooling, rainwater reuse). The current recommended build uses 110 mm PVC-U pipes in a zig-zag pattern, but the document also preserves the original 200 mm concept for reference and expansion.
+| Phase | Role | Penetration |
+|-------|------|-------------|
+| **1** | Magnetic pads + lashing secure the frame to the roof | None |
+| **2** | Water mass adds or replaces magnetic reliance for overturning and sliding | None (vessels on roof) |
+| **3** | Same water path used for passive circulation, cooling, and hot-water pre-heat | None through roof; hose-level connections only |
+
+Phases can overlap in time (e.g. Phase 1 + partial Phase 2) but the **design intent** is sequenced: prove anchor/lash, then add ballast, then plumb for thermosiphon.
 
 ---
 
-## 1. Recommended v1.0: 110 mm PVC-U Ballast System
+## Phase 1 — Magnetic anchor pads and lashing
 
-**Purpose:** Provide sufficient weight to anchor solar panels without drilling, with maximum modularity and cost-effectiveness.
+**Purpose:** Create **eight** rated anchor points on a ferromagnetic container roof so the Avoltik (or equivalent) frame can be **lashed down** without drilling.
 
-**Current Build Configuration:**
-- 6 × 110 mm diameter PVC pipes, 4 m long (main runs)
-- 5 × 0.5 m cross-over runs
-- 10 × 90º elbows for zig-zag routing
-- Total pipe length: 26.5 m
-- Total ballast: ~252 L ≈ **~252 kg of water ballast**
-- Estimated material cost: **~€290**
-- Wall thickness: 2.7 mm PVC-U (sufficient for non-pressurized static water system)
+**Target inventory (conceptual):**
+
+*   **4×** magnets rated for **~250 kg** normal pull (manufacturer definition and test conditions matter — see below).
+*   **4×** magnets rated for **~150 kg** normal pull.
+
+**Layout intent:**
+
+*   Pads are placed to align with the mounting frame’s reaction points (corners, rail nodes, or paired lugs), not necessarily in a single grid — final positions follow statics of the frame and container stiffeners.
+*   **Lashing** (webbing, turnbuckles, chain with appropriate edge protection, or equivalent) transfers tension/compression from the frame into the magnets while limiting peel on the magnet face.
+
+**Engineering notes (to be expanded):**
+
+*   Catalog pull ratings are usually **normal to a clean steel plate**; real roofs have paint, ripples, and alloy variation — **de-rate** and test on your door/skin sample.
+*   Wind uplift on tilted panels can produce **peel and sliding**; magnetic friction is finite — Phase 2 ballast often helps even when magnets remain in service.
+*   Weather: pad covers, drainage, and corrosion on magnet hardware should be specified so the system does not degrade invisibility between inspections.
+
+A future revision of this document can add pad geometry, soft-interface materials, lashing patterns, and a simple load sketch. **Phase 1 detail is intentionally brief here** until those items are fixed for your container and wind zone.
+
+---
+
+## Phase 2 — Simple water ballast (static mass)
+
+**Purpose:** Add **weight** and a distributed footprint with **no requirement** for thermal loops or thermosiphon. Water can **supplement** magnet anchors or, if analysis allows, **replace** them after ballast volume is proven.
+
+### Recommended layout: 110 mm PVC-U zig-zag
+
+**Current reference build:**
+
+*   6 × 110 mm diameter PVC pipes, 4 m long (main runs)
+*   5 × 0.5 m cross-over runs
+*   10 × 90° elbows for zig-zag routing
+*   Total pipe length: 26.5 m
+*   Total ballast: ~252 L ≈ **~252 kg of water**
+*   Estimated material cost: **~€290**
+*   Wall thickness: 2.7 mm PVC-U (suitable for non-pressurized static water)
 
 **Advantages:**
-- Fewer joints due to 4 m lengths → fewer leak points
-- Clean zig-zag routing improves structural rigidity
-- Cold-in / hot-out design supports directional thermal flow
-- Cross-runs encourage slow, even temperature distribution
 
-**Planned Flow Control:**
-- Cold rainwater enters at the lowest point (start of the zig-zag)
-- Hot water exits at the highest point (end of the zig-zag), rising into a thermal tank or rain barrel
+*   Fewer joints from 4 m lengths → fewer leak points
+*   Zig-zag improves structural stiffness of the wet frame
+*   Geometry is **compatible** with later Phase 3 routing (cold low / warm high) if sloped intentionally during install
 
-**Installation Notes:**
-- Pipes will be mounted on supports that provide a slight upward rise along the system to encourage thermosiphon flow from the cold inlet to the hot outlet
-- UV-stabilized PVC-U will resist degradation, and will be shaded under the PV panels
+**Phase 2 flow control (optional, not thermosiphon):**
+
+*   Fill/drain hose bibs only; **no reliance** on natural circulation yet.
+*   If Phase 3 is likely, installers can preset a slight continuous rise toward the intended high outlet to avoid rework.
+
+**Installation:**
+
+*   Mount on roof supports independent of magnets or integrated with lash points per your final BOM.
+*   UV-stabilized PVC-U under panel shade lasts well; straps should not concentrate load on corrugated valleys without spreader pads.
+
+### Pipe sizing considerations
+
+**Smaller diameter (e.g. 110 mm):**
+
+*   Lower cost, easier handling, common fittings
+*   Modularity and layout flexibility
+*   Faster thermal response **if/when** Phase 3 activates
+*   More joints than fewer large ducts; more leakage vigilance
+
+**Expansion:**
+
+*   Add parallel runs or bridge to larger (e.g. 200 mm) vessels later.
+
+### Alternate concept: original 200 mm U-shape (reference)
+
+*   2 × 200 mm diameter PVC pipes, 4 m long, elbowed into a **U**, with midpoint T-bracing and top/bottom hose ports.
+*   Approximate volume **~280 L (~280 kg)**.
+*   Still valid as a coarse Phase 2 block of mass where fewer pieces are preferred.
+
+### Phase 2 next steps
+
+*   Assemble the chosen pipe grid; add drain/fill with valves.
+*   Confirm combined **magnet + water** overturning/sliding margins for your exposure, or document magnet removal if retiring Phase 1.
 
 ---
 
-## 2. Pipe Sizing Considerations
+## Phase 3 — Thermosiphon & thermal integration
 
-**Pros of Smaller Diameter Pipes (e.g., 110 mm):**
-- Lower cost and easier handling
-- Readily available fittings
-- Greater modularity and layout flexibility
-- Faster heat-up response for thermal recovery
-- Allows more distributed ballast footprint
+**Purpose:** Turn the Phase 2 water inventory into **thermal mass** coupled to PV cooling and optionally domestic pre-heat, using passive density-driven flow where practical.
 
-**Cons:**
-- Lower volume per pipe = more pieces and joints
-- More fittings = more potential for leaks
-- Higher surface area = more thermal loss unless insulated
-- Less stiffness compared to 200 mm systems
+### Core concept: combined thermosiphon + rainwater cooling
 
-**Expansion Strategy:**
-- Start with a 110 mm system and expand by:
-    - Adding additional runs
-    - Connecting to larger 200 mm tanks later if needed
-    - Integrating with a central rain barrel as thermal buffer and water source
+*   Ballast volumes gain heat from ambient and panel vicinity.
+*   Hotter water rises along an ascending path toward an elevated **thermal buffer** (e.g. insulated rain barrel).
+*   At high tank level or temperature, cooler makeup (rainwater, diverter-fed) can **submerge** warmer ballast water and restore a heat-sink role under the array.
+
+**Thermal buffer barrel (conceptual):**
+
+*   Elevated versus ballast inlet/outlet to support thermosiphon head.
+*   Hot water reservoir for use; cold feed available to **refresh** ballast when cooling PV is the priority.
+
+Routing aligned with Phase 2 zig-zag:
+
+*   Cold entry at low end of zig-zag; hot exit high, toward barrel inlet — **planned slope** matters.
 
 ---
 
-## 3. Conceptual Expansion: Combined Thermosiphon + Rainwater Cooling
-
-**Goal:** Keep panels cool, generate hot water, and replace warm ballast with cool water
+## Two-stage thermosiphon (Phase 3 enhancement)
 
 **Concept:**
-- Ballast tanks heat via solar exposure
-- Hot water rises via thermosiphon into a thermal tank
-- Once hot tank is full or reaches target temp:
-    - Rainwater is added to ballast tanks via float valve or diverter
-    - Ballast tanks act as heat sinks
-    - Cooled ballast increases PV efficiency
 
-**New Addition:**
-- A **rain barrel** will be integrated as a **central thermal buffer**, elevated to support thermosiphon flow
-- It will serve as both:
-  - A **hot water reservoir** for showers
-  - A **cold water source** to feed the ballast for solar panel cooling
-- Cold rainwater enters ballast low, hot water rises from ballast high into the barrel
+*   Primary ballast remains mostly shaded under panels (mass + panel-adjacent cooling).
+*   A **secondary sun-exposed** pipe run along the uphill path **preheats** return water before it enters the barrel, increasing ΔT and circulation vigor.
 
----
+**Benefits:**
 
-## 4. Conceptual Foundation: The Original 200 mm Water Ballast Design
+*   Stronger thermosiphon, faster turnover, higher top temperatures for use
+*   Modular add-on along roof edge, wall, or guardrail
+*   Optional **radiator-like** nighttime cooling behavior
 
-*   **Purpose**: Provide sufficient weight to anchor solar panels without drilling into the container roof.
-*   **Design Details**:
-    *   2 × 200 mm diameter PVC pipes, 4 m long
-    *   Connected at one end with 90° elbows and a 0.5 m pipe to form a U-shape.
-    *   Mid-point connection with T-connectors and a 0.5 m brace pipe.
-    *   Inlet and outlet: garden hose fittings (top fill, bottom drain).
-    *   Approximate Volume: 280 L, providing ~280 kg of ballast.
-*   **Advantages**:
-    *   Inexpensive and readily available materials.
-    *   Modular and scalable design.
-    *   Stable due to distributed weight and cross-bracing.
+**Notes:**
+
+*   Match 110 mm mains or slim booster line (50–75 mm) trade velocity vs ΔT gain.
+*   Black booster surface; continuous rise to barrel inlet; allowance for thermal expansion.
 
 ---
 
-## 5. Next Steps
-- Assemble 6-run 4 m ballast pipe system with zig-zag layout
-- Add endpoints with hose valves for drain/fill
-- Elevate insulated rain barrel and connect top of ballast to barrel inlet
-- Monitor flow behavior, thermal gain, and stability
-- Log performance and refine loop design as needed
+## Floating garden & garden coil (Phase 3, optional)
 
----
-
-## Thermal Loop Enhancements: Two-Stage Thermosiphon
-
-To improve both heat capture and flow efficiency in passive thermosiphon systems, a secondary heating loop can be added on the upward return path between the ballast and the elevated rain barrel.
-
-### Concept
-
-- The primary ballast pipes are shaded beneath the solar panels and primarily act as thermal mass and panel cooling.
-- A **secondary zig-zag run** of pipe is mounted in **direct sunlight** along the upward flow path.
-- This sun-exposed section preheats the water before it enters the rain barrel, boosting temperature differential (ΔT) and accelerating natural circulation.
-
-### Benefits
-
-- **Enhanced heat gain** from direct sunlight exposure
-- **Stronger thermosiphon effect** due to increased ΔT (hotter outflow vs. cooler inflow)
-- **Faster circulation** = more efficient cooling of ballast and improved thermal turnover
-- **Higher output temperature** at the top for hot water use
-- **Modular addition**: can be mounted on roof, wall, or rail near panels
-- **Dual-use**: at night, it can act as a **radiator** to dump excess heat
-
-### Design Notes
-
-- Use 110 mm pipe to match main ballast or optionally reduce to 50–75 mm for faster heating
-- Paint booster pipe **black** or use black PVC for maximum solar absorption
-- Maintain upward slope from ballast to rain barrel inlet
-- Ensure connections are sealed and protected from expansion stress
-- Consider adding valves or bypass options if needed for seasonal operation
-
-This two-stage loop is an optional but powerful enhancement that increases both performance and flexibility of your thermal system without requiring active pumps.
-
----
-
-## Floating Garden & Garden Coil Integration
-
-The floating garden system plays a dual role in the broader water and energy ecology of this project: it serves as a **rainwater filter and biological purifier**, while also acting as a **cool-side thermal exchange** component in the hot water loop.
-
-### System Layout
-
-- The **floating garden tank** is mounted on the roof of the container
-- It is **positioned below and shaded by the insulated hot water tank**
-- This tank is **open to the air** and contains a **floating garden raft**
-- A **coil of pipe or submerged loop** runs through the garden tank and is part of the thermal return system
-
-### Functional Roles
+**Roles:**
 
 | Function | Description |
 |---------|-------------|
-| **Rainwater catchment** | Receives and stores pre-filtered rainwater for system use |
-| **Biological filtration** | Floating plant roots and bubbler improve water quality |
-| **Cooling coil** | A submerged pipe loop bleeds heat from the hot loop return water before it re-enters the ballast |
-| **Evaporation buffer** | Shaded tank mitigates excessive thermal gain and maintains relatively cool water |
-| **Stabilization** | Helps moderate the temperature of return water, increasing the overall system delta T |
+| **Rainwater / biology** | Open-top garden tank receives pre-filtered water; raft plants aid clarity |
+| **Cool-side bleed** | Submerged coil knocks temperature off the return leg before ballast inlet |
+| **ΔT booster** | Cooler ballast inlet strengthens thermosiphon driving head |
 
-### Thermal Behavior
-
-- Water exiting the insulated rain barrel travels down into the ballast
-- Before entering the ballast, it passes through the **cooling coil inside the garden tank**
-- This **reduces the temperature** of the input to the ballast system, keeping ballast water cooler
-- The cooler ballast supports **more effective PV panel cooling** and a **greater thermosiphon differential**
-
-### Design Notes
-
-- Garden tank should hold 50–100 L minimum to have thermal mass and biological inertia
-- Coil can be 32–50 mm black flexible tubing or rigid PVC
-- Coil should be **submerged and secured** beneath the floating raft
-- Optional bubbler or passive aeration helps maintain water clarity and plant health
-- Overflow from garden tank can route to ground or to additional use (e.g., greywater bed)
-
-This system not only improves water quality and reuse, but enhances overall thermal performance by passively pre-cooling the return side of the loop — enabling better energy separation and stronger heat capture.
+Hot-barrel discharge can route through this coil (~50–100 L tank minimum; 32–50 mm submerged coil common in concept studies). Overflow strategy remains separate from structural ballast sizing.
 
 ---
 
-## Performance Expectations: Estimated Temperatures & Thermal Delta
+## Performance expectations (Phase 3, indicative)
 
-This section provides realistic estimates for temperature ranges across various parts of the closed-loop hot water ballast system, based on passive solar heating, thermosiphon flow, and the addition of a garden coil as a cool-side thermal bleed.
+Rough summer ranges for a well-instrumented passive loop:
 
-### Estimated Temperature Ranges (Summer, Full Sun)
+| Component | Estimated range | Notes |
+|-----------|-----------------|--------|
+| Sun-exposed booster | 45–65 °C | Black pipe |
+| Ballast under PV | 35–45 °C | Shaded plus panel spill |
+| To hot barrel | 40–60 °C | Flow-dependent |
+| Insulated barrel top | 50–65 °C | Stratified |
+| Garden coil zone | 20–30 °C | Shaded / evaporative |
+| Ballast inlet after coil | 25–35 °C | Improves circulation ΔT |
 
-| System Component                | Estimated Temp Range | Notes |
-|--------------------------------|-----------------------|-------|
-| Solar Booster Pipe (sun-exposed) | 45–65 °C             | Black pipe in direct sunlight |
-| Ballast Pipes (shaded under PV)  | 35–45 °C             | Absorbs ambient + indirect heat from panels |
-| Outlet to Hot Tank               | 40–60 °C             | Depends on flow speed and booster efficiency |
-| Insulated Hot Water Barrel (top layer) | 50–65 °C       | Stratified if drawdown is moderate |
-| Garden Coil (shaded, partially buried) | 20–30 °C       | Passive cooling loop, aids thermal delta |
-| Ballast Inlet (post-garden coil) | 25–35 °C            | Pre-chilled return improves circulation |
+Cooler/overcast approximations: booster 30–45 °C, ballast ~25–35 °C, barrel top ~35–45 °C, coil-linked points lower by ~10–15 °C band.
 
-### On Cooler or Overcast Days
+Use logged probes at booster, ballast inlet/outlet, barrel top/bottom, and coil exit — ESP-class loggers suffice.
 
-| System Component | Estimated Temp Range |
-|------------------|-----------------------|
-| Booster Pipe     | 30–45 °C              |
-| Ballast System   | 25–35 °C              |
-| Hot Tank (top)   | 35–45 °C              |
-| Garden Coil      | 15–25 °C              |
-| Ballast Inlet    | 20–30 °C              |
+---
 
-### Thermal Delta (ΔT) Between System Points
+## Master next steps (all phases)
 
-| Between                        | Estimated ΔT | Result |
-|-------------------------------|---------------|--------|
-| Ballast outlet → Booster pipe → Hot tank | +10–20 °C | Enhances flow and top-end temperature |
-| Hot tank bottom → Garden coil → Ballast inlet | –10–20 °C | Cools return water, increasing ΔT |
-| Top vs Bottom of Hot Tank     | Up to 30 °C    | Enables hot water draw without full mixing |
-
-### Key Factors That Influence Performance
-
-- Surface area and solar exposure of booster loop
-- Quality of insulation on the hot tank
-- Shading and thermal inertia of garden coil tank
-- Height differences to support thermosiphon flow
-- Nighttime cooling (radiative and ambient)
-
-### Monitoring Recommendations
-
-- Install temperature probes at key locations:
-  - Booster pipe
-  - Ballast inlet/outlet
-  - Top & bottom of insulated rain barrel
-  - Garden coil output
-- Use Arduino or ESP32 for temperature logging if needed
-
-These numbers provide a baseline to understand and optimize your system’s behavior, helping you improve flow, conserve thermal energy, and adapt your usage strategy seasonally.
-
+1. **Phase 1:** Freeze magnet model, pad interface, eight-point lashing plan, and inspection checklist on your roof sample.
+2. **Phase 2:** Build wet mass; prove leak regimen and strap loads; reconcile with magnets (retain vs remove).
+3. **Phase 3:** Elevate buffer tank, establish continuous rise paths, connect booster optionally, then iterate on temperatures and summertime panel back-surface metrics.

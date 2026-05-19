@@ -5,7 +5,7 @@ This document covers the specifications for the all-in-one MPPT solar controller
 ## 1. Selected Model
 
 *   **Model**: EDECOA Hybrid Solar Inverter 4000W, 24V to 220V Pure Sine Wave, MPPT 110A
-*   **Link**: [EDECOA Hybrid Inverter MPPT 110A](https://www.edecoa.com/collections/hybrid-solar-inverter/products/edecoa-hybrid-solar-inverter-4000w-24v-to-220v-pure-sine-wave-mppt-110apv-55-450vdc)
+*   **Link**: [EDECOA Hybrid Inverter MPPT 110A](https://www.edecoa.com/products/edecoa-hybrid-solar-inverter-4000w-24v-to-220v-pure-sine-wave-mppt-110a-pv-55-450vdc)
 
 ## 2. Electrical Ratings
 *   **Inverter Power**: 4000 W continuous output
@@ -37,4 +37,4 @@ This document covers the specifications for the all-in-one MPPT solar controller
 *   **Communication Ports**: RS485; optional Wi-Fi/Bluetooth dongle
 
 ## Datasheet / Manual
-- [Link to product manual](docs/EM_402A_4000W_Manual_EN_31852179-4d24-4355-8ee4-4af7b8c6d221.pdf)
+- [Link to product manual](docs/EM_402A_4000W_Manual_EN.pdf)
