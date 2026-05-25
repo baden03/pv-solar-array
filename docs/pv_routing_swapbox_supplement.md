@@ -181,7 +181,22 @@ Manual A/OFF/B battery-rated transfer switch (or equivalently fused selector)
 
 Exact pole count depends on grounding architecture and inverter manual; engineer **explicit return paths**, **fault currents**, and **BMS interruption** compatibly.
 
-### 6.2 Future automation
+### 6.2 Planned selector hardware (reference)
+
+Routing **after** the auxiliary MPPT (charger output toward **BAB** vs **swap-box**, plus **OFF**) is planned to use a **battery selector–style DC switch**. This sits on the **MPPT battery port**, not on the auxiliary **2S** PV input string.
+
+**Reference listing:** [Battery selector switch (Amazon.de) — dual position / isolator-class product, B0BD8WRPF4](https://www.amazon.de/Switch-Battery-Selector-Position-Isolator/dp/B0BD8WRPF4/)
+
+Before installing, validate against the seller datasheet:
+
+- DC **voltage** rating for 24 V-class peaks (cold-charge allowances, transients).
+- Continuous (and surge) **current** versus auxiliary MPPT maximum output and conductor sizing.
+- **Pole topology** — both positive and negative switched if full isolation between destinations is required; compatibility with bonding/ground plane rules.
+- **Break-before-make** behavior between BAB and swap-box positions so outputs are never paralleled unintentionally.
+
+Listings drift; retain a printed datasheet snapshot in commissioning records.
+
+### 6.3 Future automation
 
 Relay or contactor banks may replace or augment manual switching while preserving:
 
