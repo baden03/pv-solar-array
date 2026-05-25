@@ -14,4 +14,25 @@ This project is broken down into several key areas. See the documents below for 
 
 *   **[Inverter & Power Control](./docs/inverter_system.md)**: Details on the all-in-one MPPT solar controller, charger, and inverter.
 
-*   **[Battery Bank](./docs/battery_bank.md)**: Design and specifications for the LiFePO4 battery bank. 
+*   **[Battery Bank](./docs/battery_bank.md)**: Design and specifications for the LiFePO4 battery bank.
+
+## Datasheets
+### # CATL 320Ah LiFePO4 Cell
+Model: LEP71H3L7-01
+
+| Parameter | Value |
+|-----------|-------|
+| Chemistry | LiFePO₄ |
+| Nominal capacity | 320 Ah |
+| Max charge voltage | 3.65 V |
+| Recommended charge | 0.5C |
+| Max continuous discharge | 1.0C |
+| Standard discharge cutoff | 2.5 V |
+| Absolute minimum voltage | 1.8 V |
+| Charge temperature | 0–65 °C |
+| Discharge temperature | -30–65 °C |
+| Cycle life | ≥4000 cycles |
+| Storage SOC | ~50% |
+| Resting minimum SOC | ≥5% |
+| Compression force | 300 ± 20 Kgf |
+| Internal resistance | 0.18 ± 0.05 mΩ |

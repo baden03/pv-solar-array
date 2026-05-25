@@ -1,0 +1,707 @@
+# EDECOA EM-402A Hybrid Solar Inverter Datasheet
+
+Source:
+- EDECOA Hybrid Inverter / Charger User Manual
+- Model: EM-402A
+- Version 2.3
+
+Reference File:
+EM_402A_4000W_Manual_EN.pdf
+
+---
+
+# 1. Overview
+
+The EDECOA EM-402A is an all-in-one hybrid inverter/charger integrating:
+
+- Pure sine wave inverter
+- MPPT solar charger
+- AC battery charger
+- Transfer switch
+- UPS functionality
+
+The unit supports:
+- solar charging
+- grid/generator charging
+- battery inversion
+- automatic source switching
+
+Primary application:
+- off-grid solar ESS
+- RV systems
+- marine systems
+- backup power systems
+
+---
+
+# 2. Core Specifications
+
+| Parameter | Value |
+|---|---|
+| Model | EM-402A |
+| System Voltage | 24V |
+| Rated Output Power | 4.2kVA / 3.8kW |
+| Output Waveform | Pure Sine Wave |
+| Output Voltage | 230VAC ±5% |
+| Output Frequency | 50Hz |
+| Surge Capacity | 2× rated power for 5 seconds |
+| Peak Efficiency | 94% |
+| Transfer Time | 10ms UPS / 20ms Appliances |
+| Cooling | Active fan cooling |
+
+---
+
+# 3. Inverter Specifications
+
+## AC Input
+
+| Parameter | Value |
+|---|---|
+| Nominal Input Voltage | 230VAC |
+| Max AC Input Voltage | 300VAC |
+| Frequency Detection | 50Hz / 60Hz Auto |
+
+---
+
+## AC Voltage Thresholds
+
+### UPS Mode
+
+| Parameter | Value |
+|---|---|
+| Low Loss Voltage | 170VAC ±7V |
+| Low Return Voltage | 180VAC ±7V |
+
+---
+
+### Appliance Mode
+
+| Parameter | Value |
+|---|---|
+| Low Loss Voltage | 90VAC ±7V |
+| Low Return Voltage | 100VAC ±7V |
+
+---
+
+## High Voltage Thresholds
+
+| Parameter | Value |
+|---|---|
+| High Loss Voltage | 280VAC ±7V |
+| High Return Voltage | 270VAC ±7V |
+
+---
+
+## Frequency Protection
+
+| Parameter | Value |
+|---|---|
+| Low Frequency Cutoff | 40Hz ±1Hz |
+| Low Frequency Recovery | 42Hz ±1Hz |
+| High Frequency Cutoff | 65Hz ±1Hz |
+| High Frequency Recovery | 63Hz ±1Hz |
+
+---
+
+# 4. DC Battery Specifications
+
+| Parameter | Value |
+|---|---|
+| Nominal DC Input | 24V |
+| Cold Start Voltage | 23.0V |
+| No Load Power Consumption | <25W |
+| Power Saving Consumption | <10W |
+
+---
+
+# 5. Battery Voltage Thresholds
+
+## Low Voltage Warning
+
+### Load <20%
+
+| Parameter | Value |
+|---|---|
+| Warning Voltage | 22.0V |
+| Return Voltage | 21.0V |
+
+---
+
+### 20% ≤ Load <50%
+
+| Parameter | Value |
+|---|---|
+| Warning Voltage | 21.4V |
+| Return Voltage | 20.4V |
+
+---
+
+### Load ≥50%
+
+| Parameter | Value |
+|---|---|
+| Warning Voltage | 20.2V |
+| Return Voltage | 19.2V |
+
+---
+
+## Low DC Cut-Off Voltage
+
+| Parameter | Value |
+|---|---|
+| Load <20% | 21.0V |
+| 20% ≤ Load <50% | 20.4V |
+| Load ≥50% | 19.2V |
+
+---
+
+## High Voltage Thresholds
+
+| Parameter | Value |
+|---|---|
+| High DC Recovery Voltage | 29V |
+| High DC Cutoff Voltage | 31V |
+
+---
+
+# 6. Solar MPPT Specifications
+
+| Parameter | Value |
+|---|---|
+| MPPT Rated Power | 6000W |
+| Max PV Charge Current | 110A |
+| MPPT Efficiency | 98% Max |
+| Max PV Open Circuit Voltage | 450VDC |
+| MPPT Operating Range | 55–450VDC |
+| PV Voltage Accuracy | ±2V |
+| Battery Voltage Accuracy | ±0.3% |
+
+---
+
+# 7. AC Battery Charging Specifications
+
+## Utility Charging
+
+| Parameter | Value |
+|---|---|
+| Charging Algorithm | 3-Stage |
+| Max Utility Charging Current | 80A |
+| AC Charging Current Steps | 10A / 20A |
+
+---
+
+# 8. Default Charge Voltages
+
+## Flooded Battery
+
+| Parameter | Value |
+|---|---|
+| Bulk Voltage | 29.2V |
+
+---
+
+## AGM / Gel
+
+| Parameter | Value |
+|---|---|
+| Bulk Voltage | 28.2V |
+| Float Voltage | 27.0V |
+
+---
+
+# 9. Battery Type Modes
+
+Supported modes:
+
+| Mode | Description |
+|---|---|
+| AGM | Lead acid AGM |
+| Flooded | Flooded lead acid |
+| Lithium | Lithium with BMS communication |
+| User Defined | Manual voltage configuration |
+
+---
+
+# 10. Lithium Battery Integration
+
+The inverter supports:
+- lithium communication mode
+
+Supported protocol:
+- Pylontech compatible
+
+Important:
+- JK BMS is NOT native Pylontech
+- direct CAN compatibility is uncertain
+- likely best operated in:
+  - USER mode
+  - manual voltage configuration
+
+---
+
+# 11. Communication Port Pinout
+
+## RJ45 Communication Port
+
+| Pin | Function |
+|---|---|
+| 1 | TX |
+| 2 | RX |
+| 3 | VCC |
+| 4 | VCC |
+| 5 | RS485A |
+| 6 | RS485B |
+| 7 | GND |
+| 8 | GND |
+
+This aligns with your earlier findings.
+
+---
+
+# 12. Output Source Priority Modes
+
+## SUB (Default)
+
+Priority:
+1. Solar
+2. Utility
+3. Battery
+
+Battery only assists when:
+- solar unavailable
+- utility unavailable
+
+---
+
+## SBU
+
+Priority:
+1. Solar
+2. Battery
+3. Utility
+
+This is typically preferred for:
+- off-grid operation
+- solar-first systems
+- battery utilization
+
+---
+
+# 13. Charger Source Priority Modes
+
+## CSO — Solar First
+
+Priority:
+- solar charges first
+- utility charges only when solar unavailable
+
+---
+
+## SNU — Solar + Utility
+
+Both sources charge simultaneously.
+
+---
+
+## OSO — Only Solar
+
+Only solar charging allowed.
+
+---
+
+# 14. Power Saving Mode
+
+## Enabled
+
+If load not detected:
+- inverter output shuts down
+
+Reduces idle consumption.
+
+---
+
+## Disabled
+
+Inverter output remains active continuously.
+
+Recommended for:
+- networking gear
+- electronics
+- ESPHome systems
+- Starlink
+
+---
+
+# 15. User Adjustable Parameters
+
+## Program 01 — Output Source Priority
+
+Options:
+- SUB
+- SBU
+
+---
+
+## Program 02 — Maximum Charging Current
+
+Adjustable:
+- 10A–110A
+
+Combined:
+- utility + solar current
+
+---
+
+## Program 03 — AC Input Range
+
+Options:
+- UPS
+- Appliances
+
+UPS:
+- tighter voltage tolerance
+
+Appliances:
+- wider voltage tolerance
+
+---
+
+## Program 05 — Battery Type
+
+Options:
+- AGM
+- Flooded
+- Lithium
+- USE (User Defined)
+
+---
+
+## Program 08 — Output Voltage
+
+Options:
+- 220V
+- 230V
+- 240V
+
+---
+
+## Program 09 — Output Frequency
+
+Options:
+- 50Hz
+- 60Hz
+
+---
+
+## Program 11 — Maximum Utility Charging Current
+
+Adjustable:
+- 10A–80A
+
+---
+
+## Program 12 — Return to Utility Voltage
+
+Controls:
+- when inverter switches from battery back to utility
+
+24V range:
+- 22.0V–25.5V
+
+Default:
+- 23.0V
+
+---
+
+## Program 13 — Return to Battery Voltage
+
+Controls:
+- when inverter returns from utility to battery mode
+
+24V range:
+- 24.0V–29.0V
+
+Default:
+- 27.0V
+
+---
+
+## Program 23 — Overload Bypass
+
+Options:
+- enabled
+- disabled
+
+When enabled:
+- transfers to utility on overload
+
+---
+
+## Program 26 — Bulk / CV Charging Voltage
+
+24V range:
+- 24.0V–29.0V
+
+Default:
+- 28.2V
+
+---
+
+## Program 27 — Float Voltage
+
+24V range:
+- 24.0V–29.0V
+
+Default:
+- 27.0V
+
+---
+
+## Program 29 — Low DC Cutoff Voltage
+
+24V default:
+- 21.0V
+
+---
+
+## Program 31 — Solar Power Balance
+
+When enabled:
+- PV power allocated dynamically:
+  - loads first
+  - remainder to battery charging
+
+Recommended:
+- ENABLED
+
+---
+
+# 16. Equalization Functions
+
+## Equalization Available
+
+Programs:
+- 33
+- 34
+- 35
+- 36
+- 37
+- 39
+
+Important:
+DO NOT use equalization with LiFePO4 batteries.
+
+Recommended:
+- disable all equalization functions
+
+---
+
+# 17. Operating Modes
+
+## Standby Mode
+
+No AC output:
+- charger still active
+
+---
+
+## Line Mode
+
+Loads powered from utility:
+- battery charging active
+
+---
+
+## Battery Mode
+
+Loads powered from:
+- battery
+- PV
+
+---
+
+## Fault Mode
+
+Protective shutdown condition.
+
+---
+
+# 18. Fault Codes
+
+| Code | Meaning |
+|---|---|
+| 01 | Fan locked |
+| 02 | Over temperature |
+| 03 | Battery voltage too high |
+| 04 | Battery voltage too low |
+| 05 | Output short circuit |
+| 06 | Output voltage too high |
+| 07 | Overload timeout |
+| 08 | Bus voltage too high |
+| 09 | Bus soft start failed |
+| 11 | Main relay failed |
+| 13 | PV voltage too high |
+| 51 | Over current / Surge |
+| 52 | Bus voltage too low |
+| 53 | Soft start failure |
+| 55 | Over DC voltage |
+| 57 | Current sensor failure |
+| 58 | Output voltage too low |
+
+---
+
+# 19. Lithium Communication Warnings
+
+Lithium warning codes:
+
+| Code | Meaning |
+|---|---|
+| 21 | Cell over-voltage |
+| 22 | Cell under-voltage |
+| 23 | Pack over-voltage |
+| 24 | Pack under-voltage |
+| 25 | Charge over-current |
+| 26 | Discharge over-current |
+| 27 | Charge high temperature |
+| 28 | Discharge high temperature |
+| 29 | Charge low temperature |
+| 30 | Discharge low temperature |
+| 31 | High environment temperature |
+| 32 | Low environment temperature |
+| 33 | MOS high temperature |
+| 35 | Short circuit |
+| 36 | Charger over-voltage |
+
+---
+
+# 20. Physical Specifications
+
+| Parameter | Value |
+|---|---|
+| Dimensions | 423 × 290 × 100 mm |
+| Weight | 6.8 kg |
+| Operating Temperature | 0–55°C |
+| Storage Temperature | -15–60°C |
+
+---
+
+# 21. Critical Engineering Observations
+
+## This Unit Is NOT Victron-Class Power Electronics
+
+The inverter is:
+- functional
+- flexible
+- cost effective
+
+But:
+- protections are less sophisticated
+- charging logic simpler
+- thermal management more limited
+
+Compared to:
+- Victron
+- SMA
+- Outback
+- Schneider
+
+---
+
+## The MPPT Is Very Powerful
+
+110A MPPT at 24V:
+- substantial charging capability
+
+Potential solar power into battery:
+- >2.5kW continuous
+
+This is significant for:
+- your 320Ah CATL bank
+
+---
+
+## Default Lithium Settings Are NOT Optimal for Longevity
+
+Factory defaults:
+- push LiFePO4 fairly hard
+
+We will later optimize:
+- absorb voltage
+- float voltage
+- low voltage cutoffs
+- source switching thresholds
+
+for:
+- cycle life
+- reduced stress
+- better balancing behavior
+
+---
+
+## Equalization Must Be Disabled
+
+Critical:
+- NEVER equalize LiFePO4
+
+Programs 33–39:
+- disable entirely
+
+---
+
+## Float Voltage Needs Special Attention
+
+LiFePO4 does not like:
+- prolonged high float
+
+We will likely lower:
+- float voltage significantly
+
+compared to defaults.
+
+---
+
+## High PV Voltage Requires Care
+
+450V PV max:
+- dangerous voltage class
+
+Proper:
+- breakers
+- disconnects
+- grounding
+- cable sizing
+
+are extremely important.
+
+---
+
+# 22. Likely Best Operating Strategy for Your System
+
+Based on your CATL cells + JK BMS:
+
+Recommended later target:
+- SBU mode
+- User-defined battery
+- Lower float voltage
+- Conservative absorb voltage
+- Conservative low voltage cutoffs
+- Solar-first charging
+- Equalization disabled
+- Solar balance enabled
+
+---
+
+# 23. System Role in Your ESS
+
+| Component | Role |
+|---|---|
+| CATL Cells | Energy storage |
+| JK BMS | Cell protection and balancing |
+| Victron SmartShunt | Accurate SOC tracking |
+| EDECOA EM-402A | Inverter + charger + MPPT |
+| PV Array | Energy generation |
+
+The EDECOA acts as:
+- the central power conversion hub.
+
+---
