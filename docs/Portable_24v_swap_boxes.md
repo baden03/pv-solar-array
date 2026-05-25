@@ -4,11 +4,11 @@
 
 This document describes **modular ~100 Ah, 24 V LiFePO₄ packs** meant to be hot-swapped, carried, and redeployed (base, vehicle, boat, expedition). It covers design goals, internal architecture, connectors, parallel use, charging philosophy, balancing concepts, safety, and operating modes.
 
-**How swap-boxes charge from the container’s solar** (multi-string routing, auxiliary MPPT, transfer switching, and why domains stay independent) is specified in the companion:
+**How swap-boxes charge from the container’s solar** (dedicated auxiliary PV array, auxiliary MPPT, **battery-side** destination routing, dual-array independence) is specified in the companion:
 
-**→ [Supplement — Multi-String PV Routing and Auxiliary MPPT for Swap-Box Charging](./pv_routing_swapbox_supplement.md)**
+**→ [Supplement — Dual Independent PV Arrays and Battery-Side Auxiliary MPPT Routing](./pv_routing_swapbox_supplement.md)**
 
-That supplement adopts **`PV → MPPT → Battery`** for the portable domain and **does not** use direct **battery-to-battery** charging from the stationary bank into the swap-boxes. This document stays on **pack-level** behavior; string-level wiring, switch ratings, and ESS isolation live in the supplement.
+That supplement uses **`Aux PV → Auxiliary MPPT → BAB or Swap-Box`** (selector after the auxiliary MPPT) and **`Main PV → AIO MPPT → BAB`** with **no** PV string transfer or MPPT sharing. Direct **battery-to-battery** charging from BAB into a swap-pack is **not** the plan—charge enters packs via **MPPT** or approved chargers. This file stays **pack-level**; array layout, auxiliary MPPT coordination, switching sequences, and dual-charger etiquette on BAB live in the supplement.
 
 Target characteristics for the pack ecosystem:
 
@@ -29,7 +29,7 @@ The packs are intended to serve multiple operational modes:
 
 | Mode | Purpose |
 |------|---------|
-| Daily use | Site-supported use: one pack on loads while another charges via **routed PV → auxiliary MPPT** at base (see supplement), or via shore / vehicle / other approved charger |
+| Daily use | Site-supported use: one pack on loads while another charges from the **dedicated auxiliary array → auxiliary MPPT** when that output is routed to the swap-pack (see supplement), or via shore / vehicle / other approved charger |
 | Weekend mode | Single-pack portable power away from base |
 | Travel mode | 1–3 week excursions |
 | Expedition mode | Multi-month off-grid with rotation / redundancy |
@@ -41,7 +41,7 @@ Modules stay **energy units** you move between contexts—not a single permanent
 Independence from any one tether:
 
 - not locked to one building or vessel layout  
-- at the container, **solar** coupling is by **PV diversion** to a **dedicated MPPT**, not by paralleling pack and stationary bank (see [supplement](./pv_routing_swapbox_supplement.md))  
+- at the container, the swap-pack is fed by **its own auxiliary PV chain** and **battery-side routing**—not direct DC from BAB nor shared MPPT PV inputs (see [supplement](./pv_routing_swapbox_supplement.md))  
 
 ---
 
@@ -60,23 +60,23 @@ Independence from any one tether:
 
 **Candidate hardware (under consideration):** [AliExpress — item 1005009726658632 24v 100ah](https://de.aliexpress.com/item/1005009726658632.html).
 
-### Charging at base — auxiliary MPPT and PV routing (preferred)
+### Charging at base — dedicated auxiliary PV and MPPT output routing
 
-When moored at the container install, the **intended** charge path for swap-boxes is:
-
-```text
-Auxiliary routed PV strings → Auxiliary MPPT → Portable swap-box
-```
-
-in parallel conceptually with the stationary path:
+When moored at the container install, the swap-pack charge path uses a **physically separate auxiliary PV array** (not shared or switched with main array strings):
 
 ```text
-Main PV (other strings/pairs) → All-in-One MPPT → Stationary ESS
+Auxiliary PV array → Auxiliary MPPT → (battery-side A/OFF/B) → Portable swap-box
 ```
 
-String-level **isolators**, **break-before-make A/OFF/B** transfer switches, **operating modes** (full BAB / split / full portable / maintenance OFF), avoidance of dual-MPPT contention, and equipment requirements are all defined in **[Supplement — Multi-String PV Routing and Auxiliary MPPT for Swap-Box Charging](./pv_routing_swapbox_supplement.md)**.
+Concurrently on the stationary side:
 
-**Important:** Direct **stationary bank → portable pack** DC charging is **not** part of the architecture; routing energy at the **PV** layer keeps banks independent and avoids large SOC-delta mismatch issues.
+```text
+Main PV array → All-in-One MPPT → BAB
+```
+
+The auxiliary MPPT output may alternatively be routed to **BAB** instead of the swap-pack; **two MPPT chargers feeding one battery** under aligned setpoints is normal—see **[Supplement — Dual Independent PV Arrays and Battery-Side Auxiliary MPPT Routing](./pv_routing_swapbox_supplement.md)**.
+
+**Important:** Avoid ad-hoc **BAB ↔ swap-pack DC jumpers** for charging; use the **regulated auxiliary MPPT** path (destination selected on the battery side), or discrete AC/DC chargers as appropriate.
 
 ### Other charging sources
 
@@ -84,8 +84,7 @@ When away from base or as a supplement:
 
 - shore **AC → DC** LiFePO₄-aware charger  
 - vehicle or boat DC (only where voltage, current, and BMS rules allow)  
-- portable solar arrays with their **own** MPPT/charger—not shared with container strings unless integrated via the routing rules in the supplement  
-
+- portable PV with its **own** MPPT—not by tapping the container’s auxiliary or main PV homeruns without a full redesign  
 ---
 
 ## 3. Design goals
@@ -167,7 +166,7 @@ When away from base or as a supplement:
 | USB-C PD modules | Device charging |
 | Optional DC outputs | Direct 24 V appliances |
 
-At the container, **PV** lands on the **auxiliary MPPT** input after routing (per [supplement](./pv_routing_swapbox_supplement.md)), not on the pack studs directly.
+At the container, **photovoltaic energy** enters the electrical system only via **appropriate MPPT PV inputs**: for the portable pack chain, via the **fixed auxiliary PV array → auxiliary MPPT → pack** path (never raw strings to pack studs)—see [supplement](./pv_routing_swapbox_supplement.md).
 
 ---
 
@@ -175,7 +174,7 @@ At the container, **PV** lands on the **auxiliary MPPT** input after routing (pe
 
 ### Anderson connectors
 
-Preferred ecosystem standard for **pack DC** (loads, parallel mates, chargers that connect at the battery DC bus). PV string combiners / transfer gear use **PV-rated** gear per the routing supplement—not necessarily Anderson on the DC string side.
+Preferred ecosystem standard for **pack DC** (loads, parallel mates, chargers that connect at the battery DC bus). The **fixed auxiliary PV home runs** terminate at PV isolators and the auxiliary MPPT per the [supplement](./pv_routing_swapbox_supplement.md).
 
 #### Advantages
 
@@ -211,8 +210,8 @@ The portable packs are intended to:
 **At base (container / workshop)**
 
 - one pack on loads  
-- second pack charging from **diverted PV → auxiliary MPPT** (manual transfer switches first; future automation per [supplement](./pv_routing_swapbox_supplement.md) §11–12)  
-- or charging from shore / AC charger when solar routing is not in use  
+- second pack charging from **auxiliary MPPT** when selector targets swap-pack (**battery-side routing**—see [supplement](./pv_routing_swapbox_supplement.md)); future automation likewise stays on battery output, not PV strings  
+- or charging from shore / AC charger when that path is disconnected or idle  
 
 **Boat or vehicle**
 
@@ -233,7 +232,7 @@ Research and practice suggest:
 - modern LiFePO₄ packs with proper BMS systems can be paralleled safely **provided**  
   - voltage delta is small at connect time.  
 
-This addresses **pack-to-pack** paralleling for load sharing. It does **not** replace the supplement rule: avoid **stationary ESS ↔ portable pack** DC tie for charging—use **PV routing** instead.
+This addresses **pack-to-pack** paralleling for load sharing. It does **not** supersede **[supplement](./pv_routing_swapbox_supplement.md)** discipline: swap-pack charging flows through **regulated MPPT/aux paths**, not improvised BAB↔pack DC ties.
 
 ### Practical guidelines — safe parallel connection
 
@@ -257,7 +256,7 @@ Instead:
 - cycle on real loads or solar,  
 - periodically reach top balance per BMS / service needs.  
 
-**Container / shared array:** Align operation with **[supplement](./pv_routing_swapbox_supplement.md)**—assign each PV pair to **one** MPPT at a time (break-before-make routing) so trackers do not fight the same string.
+**Two independent container arrays:** there is **no** PV-string transfer—the main and auxiliary trackers each serve **their own** array. Follow **[supplement](./pv_routing_swapbox_supplement.md)** for isolators, commissioning order, auxiliary output destination, and auxiliary↔BAB coexistence assumptions.
 
 ### Long-term storage
 
@@ -297,7 +296,7 @@ Use this **only** if you intentionally open a pack and work at cell level (e.g. 
 
 ## 12. Charging profiles
 
-Targets for **24 V nominal** packs when configuring **battery-side** charging (auxiliary MPPT, shore charger, or other DC source meeting BMS limits). **PV-side** voltage/current are set by the auxiliary MPPT and the routed string Voc/Isc—see [supplement](./pv_routing_swapbox_supplement.md) §§5–9.
+Targets for **24 V nominal** packs when configuring **battery-side** regulation (auxiliary MPPT targeting swap-pack, shore charger, or equivalent). **Auxiliary Voc/Isc sizing** sits at **that array ↔ auxiliary MPPT** interface—see [supplement](./pv_routing_swapbox_supplement.md) §§9–10.
 
 ### Operational profile
 
@@ -331,7 +330,7 @@ Targets for **24 V nominal** packs when configuring **battery-side** charging 
 ### Mode 1 — Site-supported daily use
 
 - Run selected loads from one pack  
-- Charge a second pack at base via **routed PV → auxiliary MPPT** (per [supplement](./pv_routing_swapbox_supplement.md)), or via approved non-solar chargers when needed  
+- Charge a second pack at base via **auxiliary PV → auxiliary MPPT → swap-pack** routing (selector position per [supplement](./pv_routing_swapbox_supplement.md)), or via approved non-solar chargers when needed  
 
 ### Mode 2 — Weekend trip
 
@@ -367,7 +366,7 @@ Targets for **24 V nominal** packs when configuring **battery-side** charging 
 
 **Actions:**
 
-- fully charge all packs (if policy allows; still respect BMS) — at base, prefer **full swap-box charging** PV mode from the [supplement](./pv_routing_swapbox_supplement.md) when preparing  
+- fully charge all packs as policy allows (still respect BMS) — at base set **[supplement](./pv_routing_swapbox_supplement.md)** auxiliary output priority for swap-pack and confirm auxiliary sizing supports prep timeline  
 - install onto boat/vehicle  
 - carry modular solar charging capability  
 - prioritize direct DC loads  
@@ -405,7 +404,7 @@ Potential future additions:
 - smart charging profiles  
 - seasonal automation  
 
-**PV routing automation** (SOC-driven string diversion, contactors vs manual switches) is sketched in [supplement](./pv_routing_swapbox_supplement.md) §§11–12 and can share telemetry with items below.
+**Battery-output automation** after the auxiliary MPPT (SOC-directed routing to BAB vs swap-pack) is summarized in [supplement](./pv_routing_swapbox_supplement.md) §§11–12—not PV string switching automation.
 
 ### Thermal integration
 
@@ -450,7 +449,7 @@ Each pack should include:
 | SmartShunt (or equivalent) | Monitoring |
 | Proper bus bars | Current distribution |
 
-**PV routing** adds requirements: break-before-make transfer switching, Voc/Isc-rated gear, labeling, LOTO—see [supplement](./pv_routing_swapbox_supplement.md) §§8 and 13.
+**Container integrate discipline:** auxiliary MPPT commissioning, isolate-before-service on **each** PV array, and **battery-side** selector sequencing—see [supplement](./pv_routing_swapbox_supplement.md) §§8, 10, 13.
 
 ---
 
@@ -462,7 +461,7 @@ Recommended negative path for a **single** portable pack **on the battery DC sid
 Battery → BMS → SmartShunt → Negative Bus → All Loads/Chargers
 ```
 
-**Solar at the container:** PV energy reaches the pack only after **auxiliary MPPT** regulation (preceded by isolators and transfer switches as in the [supplement](./pv_routing_swapbox_supplement.md)). Do not connect raw PV strings directly to the battery studs. When charging from base, insert the **charger/source negative** according to manufacturer and code at the engineered negative bus junction—do not bypass BMS monitoring unless explicitly allowed.
+**Solar at the container:** auxiliary PV feeds the **auxiliary MPPT**, then (**when routed**) the swap-pack—not the studs directly. Selector and conductor classes follow [supplement](./pv_routing_swapbox_supplement.md) §§6–8 (battery-side routing). Insert **charger/source negative** paths per inverter/MPPT manual and applicable code—do not bypass pack BMS rules unless engineer-approved exceptions exist.
 
 ---
 
@@ -480,7 +479,7 @@ Battery → BMS → SmartShunt → Negative Bus → All Loads/Chargers
 - marine integration  
 - swappable inverter modules  
 
-Several items overlap the **automated PV routing** roadmap in [supplement](./pv_routing_swapbox_supplement.md) §§11–14.
+Several items overlap the **battery-output automation / telemetry** roadmap in [supplement](./pv_routing_swapbox_supplement.md) §§11–14.
 
 ---
 
@@ -489,10 +488,10 @@ Several items overlap the **automated PV routing** roadmap in [supplement](./pv_
 | Document | Role |
 |----------|------|
 | [Portable / Hot-Swappable 24 V LiFePO₄ Packs (~100 Ah)](./Portable_24v_swap_boxes.md) (this file) | Pack goals, internals, connectors, parallel use, profiles, modes |
-| [Supplement — Multi-String PV Routing and Auxiliary MPPT for Swap-Box Charging](./pv_routing_swapbox_supplement.md) | PV isolators, A/OFF/B routing, aux MPPT, modes, switch ratings, no B2B charging |
+| [Supplement — Dual Independent PV Arrays and Battery-Side Auxiliary MPPT Routing](./pv_routing_swapbox_supplement.md) | Two PV arrays + two MPPTs; auxiliary output selector BAB vs swap-box; dual-MPPT-into-BAB rationale; commissioning / safety |
 
 ---
 
 ## 21. Closing
 
-These ~100 Ah modules are **portable solar-capable ESS nodes**: electrically **independent** from the stationary bank, with **container-side charging** delivered by **diverted PV → dedicated MPPT** as specified in the **[routing supplement](./pv_routing_swapbox_supplement.md)**—not by dc-lashing two battery systems together.
+These ~100 Ah modules remain **portable ESS nodes**. At the container, energy reaches them via the **standalone auxiliary PV + auxiliary MPPT** chain and **battery-side destination selection** documented in **[the supplement](./pv_routing_swapbox_supplement.md)**—not by improvised DC links from BAB nor by multiplexing trackers across shared PV strings.

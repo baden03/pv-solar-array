@@ -1,452 +1,407 @@
-# Supplement — Multi-String PV Routing and Auxiliary MPPT Architecture for Swap-Box Charging
+# Supplement — Dual Independent PV Arrays and Battery-Side Auxiliary MPPT Routing
 
 ## Purpose
 
-This document supplements the main document:
+This document supplements:
 
 **[Portable / Hot-Swappable 24 V LiFePO₄ Battery Packs (~100 Ah)](./Portable_24v_swap_boxes.md)**
 
-It specifically defines the architecture for:
+It defines the **container-side** architecture for:
 
-- multi-string PV routing,
-- auxiliary MPPT charging,
-- swap-box charging isolation,
-- manual and future automated PV switching,
-- and safe solar energy diversion between the primary stationary ESS and portable swap-boxes.
+- two **permanently separated** photovoltaic (PV) arrays and MPPT channels,
+- a **main** energy path (main PV → all-in-one MPPT → stationary bank),
+- an **auxiliary** energy path (auxiliary PV → dedicated auxiliary MPPT → **battery-side** destination selection),
+- and safe extension of that auxiliary charge path to either the **stationary bank (BAB)** or a **portable swap-box**—without reconfiguring PV strings, without live PV transfer switching, and without multiple MPPT units sharing the same PV source.
 
-This document intentionally avoids battery-to-battery charging between the stationary bank and the portable packs.
-
----
-
-# 1. Design Philosophy
-
-The preferred architecture is:
-
-```text
-PV → MPPT → Battery
-```
-
-rather than:
-
-```text
-Battery → DC-DC → Battery
-```
-
-The portable swap-boxes are therefore treated as:
-
-- independent battery systems,
-- with independent MPPT charging capability,
-- powered by selectively diverted PV strings.
-
-This avoids:
-
-- uncontrolled battery-to-battery inrush current,
-- forced paralleling of banks with large SOC deltas,
-- unnecessary DC-DC conversion losses,
-- and sudden battery substitution events at the all-in-one inverter/charger.
+Direct **battery-to-battery** charging from BAB into a swap-box remains **out of scope** as an intentional energy-transfer method; charge is delivered through **MPPT-regulated** outputs consistent with each battery’s BMS and charge limits.
 
 ---
 
-# 2. Core Architecture
+## 1. Design philosophy
 
-## Stationary System
+Each electrical domain follows the same high-level pattern:
 
-The primary system remains:
+```text
+Dedicated PV array → Dedicated MPPT → Selected battery (per routing policy)
+```
+
+The design prefers:
+
+- **independent PV domains** (no shared strings, no PV-side “A/B” allocation),
+- **independent MPPT domains** (each tracker owns its own array wiring end to end),
+- **battery-side routing** for the auxiliary charger output—where currents are regulated and where destination choice is mechanically or logically simplest,
+- fewer failure modes than architectures that multiplex strings between trackers,
+- straightforward diagnostics (**one array → one MPPT → one conduit of responsibility** prior to battery selection),
+- a path toward **SOC-aware automation** without ever automating PV string switching.
+
+The portable swap-box remains a **standalone** battery system (own BMS, own disconnects). When selected on the auxiliary path, it receives charge from the **auxiliary MPPT**, not from a DC jumper from BAB.
+
+---
+
+## 2. Core architecture
+
+### 2.1 Main system
+
+The primary stationary chain is unchanged in concept:
 
 ```text
 Main PV Array
+       │
+       ▼
+PV isolator (main)
+       │
+       ▼
+All-in-One Inverter / Charger (integrated MPPT)
+       │
+       ▼
+BAB (Big Ass Battery — stationary LiFePO₄ bank)
+```
+
+**Assignments:** permanent homeruns from the **main array** to the **main isolator**, then to the **all-in-one PV input**. There is **no** requirement for that wiring to interoperate with the auxiliary array aside from coordinated protection, labeling, and mechanical separation.
+
+---
+
+### 2.2 Auxiliary system
+
+The secondary chain is also **fixed** on the PV side:
+
+```text
+Auxiliary PV Array
+       │
+       ▼
+PV isolator (auxiliary)
+       │
+       ▼
+Dedicated Auxiliary MPPT Controller
+       │
+       ▼
+Battery-selection routing system  (battery side)
+       ├──► BAB  (stationary bank)
+       └──► Portable swap-box (or OFF)
+```
+
+**Routing lives after the auxiliary MPPT output**, not in front of it. The auxiliary MPPT **always** sees the **same** PV array terminals; changing the destination does **not** alter string voltage available to that tracker.
+
+---
+
+### 2.3 End-to-end system sketch
+
+Conceptually:
+
+```text
+Main PV ──► AIO MPPT ─────────────► BAB ◄────┐
+                                              │ (when selected)
+Aux PV ──► Aux MPPT ──► A/OFF/B ──────────────┘
+                              └──► Swap-Box
+```
+
+The branch to BAB duplicates a **regulated charge source** onto a bus that may already receive current from the AIO charger. Section 5 explains why that parallel charging model is acceptable when executed with matched charge policies and coordinated hardware.
+
+---
+
+## 3. Why dedicated arrays (not PV string switching)
+
+Prior concepts considered **moving** PV strings between MPPT inputs using DC transfer switches. That approach is **not** retained.
+
+**Problems with PV-side switching:**
+
+- **MPPT contention:** two controllers must never drive the **same** array concurrently; break-before-make transfer gear must interrupt **PV** under challenging DC arc conditions.
+- **Complexity:** per-string Voc/Isc ratings, irradiance transients during transfer, labeling, lockout granularity, and failure analysis all scale poorly.
+- **Diagnostics:** intermittent MPPT instability is harder to attribute when strings are multiplexed instead of statically assigned.
+
+**Dedicated arrays:**
+
+- Each MPPT retains a **single, stable** VI source topology.
+- Isolation for service is handled with **PV isolators** at each array—not with “moving” strings between chargers.
+- **Energy allocation between BAB and portable systems** shifts to controlled **charger outputs** rather than rewiring photovoltaic sources under load.
+
+This trades some panel count flexibility for **predictable behavior**, **cleaner commissioning**, and **simpler future automation**.
+
+---
+
+## 4. Why battery-side switching is preferred here
+
+Battery-side routing (after the auxiliary MPPT) concentrates switching in a **regulated, battery-referenced** environment:
+
+- Auxiliary MPPT output current is bounded by charger behavior and programmed limits.
+- Voltage at the switching point is anchored by the **destination battery**, which provides a comparatively **stiff** bus during normal charging (within BMS permissive ranges).
+- **Automation** translates to supervised contactors or motorized switches on modest DC bus conductors—equipment classes that are commonplace in marine and off-grid installs—rather than high-voltage string commutators switching near Voc.
+
+Operational clarity improves: operators state **where auxiliary charge is routed**, not **which PV string belongs to whom today**.
+
+---
+
+## 5. Two MPPT controllers charging one battery — technical basis
+
+When the auxiliary output is switched to **BAB**, **both** the all-in-one MPPT and the **auxiliary MPPT** may simultaneously source charge current into the **same physical bank**.
+
+**This is acceptable and conventional** when:
+
+1. Both controllers are programmed for **compatible LiFePO₄ charge voltage targets** for the stationary bank’s architecture (bulk/absorption ceilings, allowable float behavior, temperature compensation policy).
+2. **Each path is individually protected** (fusing/breakering appropriate to conductors and charger output capability).
+3. **BMS and bank-level rules** tolerate combined charge currents and do not command conditions that contradict either charger’s safe envelope.
+4. Paralleling at the battery behaves as **shared CV/CC regulation** mediated by internal cell physics and impedance—the battery absorbs the summed contribution while terminal voltage settles to a coherent operating point absent gross disagreements between controllers.
+
+Large battery banks routinely integrate **alternator chargers**, **solar MPPT**, and **shore chargers** concurrently; **two MPPT units** feeding the same bank differs only by source physics, not fundamentally by instability requirement—provided programmed setpoints converge and conductors are engineered with **summed current** awareness.
+
+### 5.1 Practical coordination notes
+
+- Align **maximum absorption voltage**, **temperature derates**, and **float/disable** preferences between chargers to reduce **push-pull** currents that waste energy at end-of-absorption transitions.
+- Document **combined maximum charge acceptance** versus **recommended continuous** conductor ampacity after derating.
+
+When the auxiliary output is routed to the **swap-box**, only that pack’s **BMS and MPPT absorption profile for 24 V-class LiFePO₄** apply; BAB is electrically **not** in the auxiliary output path unless the selector bridges there.
+
+---
+
+## 6. Battery-side routing topology
+
+### 6.1 Manual implementation (conceptual)
+
+A practical structure:
+
+```text
+Auxiliary MPPT battery (+) / (−)
         │
         ▼
-All-in-One Inverter / MPPT
+Manual A/OFF/B battery-rated transfer switch (or equivalently fused selector)
         │
-        ▼
-BAB (Big Ass Battery)
+        ├── A → BAB DC charge bus junction (regulated node; coordinated with AIO feeder)
+        ├── B → Portable swap-box DC input (connectorized Anderson or approved busbar)
+        └── OFF → Auxiliary MPPT unloaded or internal MPPT suppressed per manual
 ```
 
-## Portable Swap-Box Charging System
+**Requirements:**
 
-Additional PV strings are routed independently:
+| Topic | Recommendation |
+|--------|----------------|
+| Voltage rating | Exceed worst-case bank maximum including temperature and charge spikes |
+| Current rating | Exceed auxiliary MPPT maximum sustained output with margin |
+| DC breaking | Prefer devices **intended for DC load switching** in that voltage/current class—not AC gear |
+| Configuration | Typical **four-pole** mental model when both **+** and **−** are switched for full isolation (**2-pole** minimum if intentionally commoning negatives per permitted topology—validate against fault paths) |
+
+Exact pole count depends on grounding architecture and inverter manual; engineer **explicit return paths**, **fault currents**, and **BMS interruption** compatibly.
+
+### 6.2 Future automation
+
+Relay or contactor banks may replace or augment manual switching while preserving:
+
+- mutually exclusive energized paths (no condition that parallels BAB pack and swap-box through the auxiliary output unless explicitly designed for it—normally **disallowed** without study),
+- interlocks that respect **sequences** discussed in §8,
+- SOC-driven decisions (§11).
+
+Automation remains **on the battery side** of the auxiliary MPPT—not on the PV feeders.
+
+---
+
+## 7. Operational modes
+
+Operational modes describe **routing intent** behind the auxiliary MPPT—not PV string choreography.
+
+### Mode A — Auxiliary charge to swap-box
 
 ```text
-Auxiliary PV Pair(s)
-        │
-        ▼
-PV Routing System
-        │
-        ├──► Main All-in-One MPPT
-        │
-        └──► Auxiliary MPPT
-                  │
-                  ▼
-           Portable Swap-Box
+Main PV ──► AIO MPPT ──► BAB
+Aux PV ──► Aux MPPT ──► Swap-Box
 ```
 
----
-
-# 3. Key Principle
-
-The stationary BAB and the portable swap-boxes do NOT need to be directly electrically connected.
-
-Instead:
-
-- solar energy is dynamically routed,
-- each battery system remains independently managed,
-- and each MPPT only sees its assigned PV source.
-
-This removes the need for:
-
-- direct battery paralleling,
-- convergence charging between banks,
-- or DC-DC battery charging.
+**Use:** maintain stationary ESS normally while concentrating auxiliary solar on portable preparation, expedition turnaround, or load-serving packs.
 
 ---
 
-# 4. Multi-String PV Routing
-
-## Example Physical Layout
-
-Example:
-
-- PV Pair 1 → 2 panels in series
-- PV Pair 2 → 2 panels in series
-
-Each pair has:
-
-1. a dedicated PV isolator,
-2. and an A/OFF/B transfer switch.
-
----
-
-# 5. Example Routing Topology
+### Mode B — Auxiliary charge blended into BAB
 
 ```text
-PV Pair 1
-    │
-    ▼
-PV Isolator
-    │
-    ▼
-A/OFF/B Transfer Switch
-    ├──► A = Main All-in-One MPPT
-    └──► B = Auxiliary Swap-Box MPPT
-
-
-PV Pair 2
-    │
-    ▼
-PV Isolator
-    │
-    ▼
-A/OFF/B Transfer Switch
-    ├──► A = Main All-in-One MPPT
-    └──► B = Auxiliary Swap-Box MPPT
+Main PV ──► AIO MPPT ──┐
+                        ├──► BAB
+Aux PV ──► Aux MPPT ───┘
 ```
+
+**Use:** maximize BAB acceptance when portable charging is deferred; leverages **dual MPPT into one battery** per §5.
+
+Monitor **combined current** acceptance and thermal rise.
 
 ---
 
-# 6. Operational Modes
-
-## Mode A — Full Stationary Charging
+### Mode C — Auxiliary controller idle / swap-box parked
 
 ```text
-Pair 1 → All-in-One
-Pair 2 → All-in-One
+Main PV ──► AIO MPPT ──► BAB
+Aux PV ─► (isolator open) OR MPPT inhibited/output disconnected
 ```
 
-Result:
+**Use:** commissioning, swapping portable packs absent a connected target, deliberate curtailment, or sparing auxiliary PV during maintenance windows.
 
-- 100% PV power available to BAB.
+Prefer **opening the auxiliary PV isolator** when auxiliary electrics remain connected but PV input must be inactive—coordinate with auxiliary MPPT documentation for correct startup after re-energization.
 
 ---
 
-## Mode B — Split Charging
+### Mode D — Isolation / servicing
+
+Either array may be serviced independently:
 
 ```text
-Pair 1 → All-in-One
-Pair 2 → Swap-Box MPPT
+(Main isolator OPEN) → Main PV dark; AIO input safe for work per LOTO procedures
+(Auxiliary isolator OPEN) → Auxiliary PV dark
 ```
 
-Result:
-
-- stationary system charges normally,
-- portable swap-box charges independently.
+Maintain **dual labeling** (**MAIN** vs **AUX**) on isolators and MPPT enclosures.
 
 ---
 
-## Mode C — Full Swap-Box Charging
+## 8. Switching sequence and safety considerations
 
-```text
-Pair 1 → Swap-Box MPPT
-Pair 2 → Swap-Box MPPT
-```
+### 8.1 Commissioning precedence
 
-Result:
+Industry practice and many charge-controller manuals converge on conservative ordering:
 
-- all available diverted PV energy is assigned to portable charging.
+1. **Verify** conductors, fuses/breakers, polarity, grounding/bonding assumptions, transfer switch positioning, **OFF** verification.
+2. **Connect battery** terminals at each MPPT that requires battery sensing for operation (consult manuals—some auxiliary units permit PV-first with explicit limits; defer to manufacturer guidance).
+3. **Energize PV** beginning with isolation devices **CLOSED**, MPPT observing correct Voc within limits.
 
-This is especially useful when:
-
-- BAB is already full,
-- portable packs are depleted,
-- or expedition preparation is underway.
+Deviation may void warranty or cause **input overvoltage** transients absent battery clamping behaviors.
 
 ---
 
-## Mode D — Maintenance / Isolation
+### 8.2 Changing battery destination mid-operation
 
-```text
-One or more PV pairs → OFF
-```
+Changing the auxiliary **A/OFF/B** routing while photovoltaic energy is converting:
 
-Result:
+- **Assume that interrupting auxiliary MPPT output** may coincide with nonzero MPPT inductor/filter states and battery loop inductance—inrush or voltage excursions can arise if energy cannot freewheel per internal MPPT protections.
+- **Preferred:** taper auxiliary PV input (**open auxiliary isolator**), allow MPPT ramp-down/de-energizing per manual, reposition selector to new destination (**OFF** intermediary if break-before-make), then restore PV—in order dictated by instrumentation and audible checks for arcing/abnormal buzzing.
 
-- complete isolation of selected strings.
+Treat **routing changes** akin to breaker operations on an active charging bus: deliberate, paced, observable.
 
-Useful for:
-
-- maintenance,
-- diagnostics,
-- fault isolation,
-- or MPPT servicing.
+Never parallel BAB and swap-box inadvertently through sloppy selector wiring; verify **exclusive** auxiliary output continuity per position.
 
 ---
 
-# 7. Why This Architecture Is Preferred
+## 9. Auxiliary MPPT requirements
 
-## Avoiding MPPT Conflicts
-
-Two MPPT controllers should NOT simultaneously manipulate the same PV source directly.
-
-MPPT controllers continuously:
-
-- adjust operating voltage,
-- change current draw,
-- track maximum power points.
-
-If two MPPTs attempt to control the same string simultaneously:
-
-- instability may occur,
-- efficiency drops,
-- and tracking quality suffers.
-
-The routing architecture avoids this entirely by assigning each PV pair to exactly one MPPT at a time.
-
----
-
-# 8. Switch Requirements
-
-## Transfer Switch Type
-
-Recommended:
-
-```text
-A / OFF / B
-break-before-make
-PV-rated DC transfer switch
-```
-
-The switch MUST:
-
-- break the first circuit completely before connecting the second,
-- never connect both MPPTs simultaneously,
-- and be rated for live PV DC switching.
-
----
-
-## Electrical Requirements
-
-Switches must be rated above:
-
-| Parameter | Requirement |
-|---|---|
-| Voc | Cold-weather open-circuit voltage |
-| Isc | Short-circuit current with safety margin |
-| Voltage class | Entire string voltage |
-| DC arc rating | Required |
-
----
-
-## Pole Count
-
-Preferred:
-
-```text
-2-pole switching
-```
-
-Meaning:
-
-- PV positive switched,
-- PV negative switched.
-
-This simplifies isolation and diagnostics.
-
----
-
-# 9. Auxiliary MPPT Requirements
-
-The auxiliary swap-box MPPT must support:
+Independent PV demands a unit sized for **its** array—not for split-string duty.
 
 | Feature | Requirement |
-|---|---|
-| LiFePO₄ profiles | Required |
-| 24 V battery support | Required |
-| Input voltage range | Compatible with routed PV pairs |
-| Current handling | Sized for maximum diverted PV |
-| Temperature protection | Strongly preferred |
-| Adjustable charging | Preferred |
+|---------|--------------|
+| LiFePO₄ charge profiles | Required for whichever destination dominates planned use (**or** BAB profile when BAB targeting is dominant) |
+| 24 V battery support | Required when swapping output targets include ~24 V-class LiFePO₄ portable packs |
+| Input voltage envelope | Shall exceed **cold Voc** auxiliary array aggregate with NEC/local margin policy |
+| Current handling | Shall exceed auxiliary **Imp × string factor × safety multiplier** conductor-limited upstream |
+| Environment | IP class suitable for enclosure location; marine derating consideration if aboard |
+| Remote shutdown / inhibition | Prefer capability if automation overlays later |
+
+Programming **dual personality** (charging BAB vs charging portable) may entail **dual parameter sets**, **password-protected profile banks**, or **operator checklist** swaps—prevent silent mis-absorption transitions.
 
 ---
 
-# 10. Swap-Box Charging Philosophy
+## 10. Main vs auxiliary PV hardware discipline
 
-The portable swap-box:
+Both arrays independently require:
 
-- remains electrically independent,
-- maintains its own BMS,
-- uses its own MPPT charging path,
-- and never requires direct battery-to-battery charging from BAB.
+| Element | Recommendation |
+|---------|----------------|
+| PV isolator | Lockable, conspicuously labeled, DC-rated Voc/Isc class |
+| Conductor routing | Maintain separation discipline; accidental cross-tie defeats architectural simplification assumptions |
+| Surge protection / bonding | Harmonize with grounding plan and NEC/locale |
 
-This architecture treats the swap-box as:
+**Do not**:
+
+- splice auxiliary homeruns into main array combiners intending “temporary experimentation” without redoing labeling and protections,
+- jumper MPPT PV inputs together,
+- retrofit mid-string taps for third loads without restructuring design.
+
+---
+
+## 11. Future automation roadmap (battery-centric)
+
+Recommended evolution:
+
+| Phase | Capability |
+|-------|-------------|
+| **Manual** | A/OFF/B selector supervised; SOC noted from shunts/BMS |
+| **Semi-automatic** | Contactor sequencing with PLC/ESP/Home Assistant interlocks enforcing delay between opens/closes |
+| **Automated SOC policy** | If BAB SOC < threshold AND no portable connected → auxiliary → BAB bias; elif portable low SOC flagged → auxiliary → portable; hysteresis prevents chatter |
+
+Inputs:
+
+| Sensor / signal | Automation use |
+|-----------------|----------------|
+| BAB SOC/voltage proxy | Charging priority splits |
+| Portable BMS SOC or pack voltage telemetry | Permission to terminate aux charge or redirect |
+| PV availability heuristic | Idle reduction / curtail advisory |
+| Temperature | Charger derate / disallow |
+| Fault flags | Force OFF / isolate auxiliary output |
+
+Automation **explicitly excludes** motorized PV-string switching matrices in this roadmap.
+
+---
+
+## 12. Example automation logic sketch (conceptual—not executable spec)
 
 ```text
-portable solar ESS node
+IF auxiliary_pv_active AND auxiliary_mppt_idle_or_safe_transition:
+    IF portable_pack_present AND portable_soc_below_threshold:
+        route_aux_output SWAP_BOX
+    ELSE IF bab_soc_below_high_absorb_ceiling_margin:
+        route_aux_output BAB
+    ELSE IF portable_absent AND bab_above_ceiling_minus_hysteresis:
+        inhibit_aux_bulk OR curtail_via_mppt_specific_feature
+ELSE:
+    defer routing change until safe transition window verified
 ```
 
-rather than merely:
+Hysteresis, delay timers, mechanical wear counts for contactors, and human override **hard switches** preserve manual authority.
+
+---
+
+## 13. Safety philosophy
+
+Mandatory practices:
+
+| Principle | Application |
+|-----------|-------------|
+| Clear identification | Labels: **MAIN ARRAY**, **AUX ARRAY**, **AUX OUTPUT → BAB / SWAP**, **OFF** meanings |
+| LOTO suitability | Isolate both arrays distinctly for intrusive MPPT servicing |
+| Coordinated sequencing | §8 commissioning and reroute discipline |
+| Coherent protection sizing | Fuse/breakers sized for summed contributions when BAB receives dual chargers |
+| Fire / thermal vigilance | Dual charging increases sustained charge duty—monitor bank temperature clustering |
+
+Maintain **datasheet binders**: Voc/Isc computations for both arrays, MPPT manuals, inverter integration notes, BAB BMS allowances, portable BMS datasheet constraints.
+
+---
+
+## 14. Recommended development path
+
+| Stage | Deliverable |
+|-------|----------------|
+| **1 — Static architecture** | Two arrays installed, labeled isolators, auxiliary MPPT manually routed, documented parameter sets |
+| **2 — Safety validation** | Load-test dual MPPT into BAB currents, conductor thermal checkpoints, harmonic-free inspection of interaction at absorb boundaries |
+| **3 — Telemetry** | Shunt/logging alignment for SOC automation inputs |
+| **4 — Controlled automation** | Battery-side relays with proven interlocking from §§8–12 |
+
+Defer digital complexity until empirical confidence exists in absorption alignment and sequencing.
+
+---
+
+## 15. Summary
+
+The deployed architecture adopts:
 
 ```text
-portable battery
+Main PV ──► AIO MPPT ──► BAB
+Aux PV ───► Aux MPPT ─► Battery routing ──► BAB or Swap-Box
 ```
 
----
+It **eliminates**:
 
-# 11. Future Automation
+- PV string transfer switching,
+- shared-source MPPT multiplexing,
+- dynamic string reconfiguration (e.g., 4S ⇄ 6S reassignments tied to swapping destinations),
+- centralized PV routing matrices.
 
-## Phase 1 — Manual Routing
+It **advantages**:
 
-Initially:
+- simplicity and reproducibility during commissioning,
+- transparent diagnostic boundaries,
+- scalability toward SOC-driven **battery-output** coordination,
+- maintenance of **regulated** coupling to portable packs without bridging batteries directly,
 
-- manual PV transfer switches,
-- operator-controlled routing.
-
-Advantages:
-
-- simple,
-- transparent,
-- low-complexity,
-- easy diagnostics.
-
----
-
-## Phase 2 — Automated Routing
-
-Later:
-
-- replace transfer switches with:
-  - DC contactors,
-  - motorized switches,
-  - or relay-controlled transfer systems.
-
-Controller inputs may include:
-
-| Data Source | Purpose |
-|---|---|
-| BAB SOC | Determine stationary demand |
-| Swap-box SOC | Determine portable demand |
-| PV availability | Energy routing |
-| Battery temperature | Charge safety |
-| BMS fault states | Isolation logic |
-| Time-of-day | Automation logic |
-| Expedition mode | Priority charging |
-
----
-
-# 12. Example Future Automation Logic
-
-```text
-IF swap-box connected AND low SOC:
-    divert one PV pair to auxiliary MPPT
-
-IF BAB full:
-    divert additional PV to swap-box charging
-
-IF swap-box full:
-    restore PV strings to all-in-one
-
-IF fault:
-    isolate affected PV pair
-```
-
----
-
-# 13. Important Safety Principles
-
-The routing system MUST:
-
-- remain break-before-make,
-- prevent dual-MPPT contention,
-- maintain proper PV isolation capability,
-- support lockout/tagout servicing,
-- and provide clear labeling.
-
----
-
-# 14. Recommended Development Path
-
-## Stage 1
-
-Build:
-
-- independent PV pair routing,
-- manual transfer switching,
-- dedicated auxiliary MPPT,
-- portable swap-box charging path.
-
-## Stage 2
-
-Add:
-
-- monitoring,
-- SOC awareness,
-- automation controller,
-- relay/contactors,
-- telemetry.
-
-## Stage 3
-
-Potential future additions:
-
-- Node-RED integration,
-- MQTT telemetry,
-- ESPHome monitoring,
-- solar prioritization logic,
-- expedition charging profiles,
-- seasonal automation,
-- remote control,
-- mobile app integration.
-
----
-
-# 15. Final Summary
-
-This architecture creates:
-
-- a modular solar routing system,
-- independent charging domains,
-- flexible PV allocation,
-- portable energy autonomy,
-- and low-loss charging paths.
-
-The system intentionally avoids:
-
-- direct battery-to-battery charging,
-- uncontrolled parallel connection,
-- and multi-MPPT contention on shared PV strings.
-
-Instead, energy routing occurs at the PV-string level, allowing:
-
-- full stationary charging,
-- full portable charging,
-- or dynamic split allocation,
-- while keeping both ESS domains electrically independent.
+while recognizing that **two MPPT chargers feeding one bank** remains a **straightforward cooperative regime** provided engineering alignment of charge policies and protection.
